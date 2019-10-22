@@ -23,7 +23,7 @@ def to_hour(data):
     for point in data:
         if not isinstance(point['time'], str):
             hour = int(point['time'] // 60)
-            minute = point['time'] % 60
+            minute = int(point['time'] % 60)
 
             data_with_hour.append({'name': point['name'], 'time': f'{hour}:{minute}'})
         else:
