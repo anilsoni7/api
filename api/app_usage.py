@@ -128,5 +128,7 @@ def main(data):
         pred = predict(model, data) * 1440
         if pred > 0:
             response.append({name: pred})
+        elif pred > 1440:
+            response.append({name: 'no usage time found for current day'})
 
     return response
