@@ -126,9 +126,9 @@ def main(data):
         pd.DataFrame(data_plot).to_csv(os.path.join(model_path, 'data.csv'), mode='a', header=False)
 
         pred = predict(model, data) * 1440
-        if pred > 0:
-            response.append({name: pred})
+        if pred > 0 and pred <= 1440:
+            response.append({'name': name, 'opentime': pred})
         elif pred > 1440:
-            response.append({name: 'no usage time found for current day'})
+            response.append({'name': name, 'opentime': 'no usage time found for current day'})
 
     return response
