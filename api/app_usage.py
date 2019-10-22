@@ -104,7 +104,7 @@ def main(data):
         pd.DataFrame(columns=['name', 'error']).to_csv('data.csv')
     for ind, df in data.groupby(by=['name']):
         name = df.name.iloc[0]
-        y = in_seconds(df.start)
+        y = in_minutes(df.start)
         x = list(range(len(y)))
         y = np.asarray(y).reshape(-1, 1)
         x = np.asarray(x).reshape(-1, 1)
@@ -125,7 +125,7 @@ def main(data):
 
         pd.DataFrame(data_plot).to_csv(os.path.join(model_path, 'data.csv'), mode='a', header=False)
 
-        pred = predict(model, data)
+        pred = predict(model, data) * 1440
         if pred > 0:
             response.append({name: pred})
 
