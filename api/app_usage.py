@@ -127,8 +127,8 @@ def main(data):
 
         pred = predict(model, data) * 1440
         if pred > 0 and pred <= 1440:
-            response.append({'name': name, 'opentime': pred})
+            response.append({'name': name, 'time': pred})
         elif pred > 1440:
-            response.append({'name': name, 'opentime': 'no usage time found for current day'})
+            response.append({'name': name, 'time': 'no usage time found for current day'})
 
     return response
