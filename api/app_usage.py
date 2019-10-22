@@ -104,7 +104,7 @@ def main(data):
         pd.DataFrame(columns=['name', 'error']).to_csv('data.csv')
     for ind, df in data.groupby(by=['name']):
         name = df.name.iloc[0]
-        y = in_seconds(df.start)
+        y = in_minutes(df.start)
         x = list(range(len(y)))
         y = np.asarray(y).reshape(-1, 1)
         x = np.asarray(x).reshape(-1, 1)
@@ -119,14 +119,20 @@ def main(data):
         joblib.dump(model, os.path.join(model_path, f'{name}.model'))
 
         current_model = model_info(error=error, model=name, tolerance=tolerance, y_max=y_max, x_max=x_max)
+        print(model.__dict__)
 
         data_plot['name'].append(name)
         data_plot['error'].append(error)
 
+        print(data_plot)
+
+        print(y)
         pd.DataFrame(data_plot).to_csv(os.path.join(model_path, 'data.csv'), mode='a', header=False)
 
         pred = predict(model, data)
-        if pred > 0:
-            response.append({name: pred})
+        if pred > 0 and pred < 1440:
+            response.append({'name':name ,'opentime':pred})
+        else:
+            response.append({'name': name, 'opentime': 'error'})
 
     return response
