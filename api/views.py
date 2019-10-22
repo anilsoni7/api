@@ -21,7 +21,7 @@ def to_hour(data):
     data_with_hour = []
 
     for point in data:
-        if isinstance(point['time'], int):
+        if not isinstance(point['time'], str):
             hour = int(point['time'] // 60)
             minute = point['time'] % 60
 
