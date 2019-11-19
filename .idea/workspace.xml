@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8e8957cb-66fb-42c3-acbe-7f4134e49859" name="Default Changelist" comment="" />
+    <list default="true" id="8e8957cb-66fb-42c3-acbe-7f4134e49859" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/app_usage.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/app_usage.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/clickvdt_appusage.sql" beforeDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,6 +22,9 @@
         <option value="Python Script" />
       </list>
     </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1SSfmkr97b454HPcxvGM2XHsuhU" />
   <component name="PropertiesComponent">
@@ -77,10 +85,22 @@
       <option name="presentableId" value="Default" />
       <updated>1571562078140</updated>
       <workItem from="1571562100712" duration="7325000" />
+      <workItem from="1574178090296" duration="8568000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

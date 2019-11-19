@@ -4,6 +4,7 @@ from collections import defaultdict, namedtuple
 import pandas as pd
 from sklearn.externals import joblib
 from sklearn.metrics import mean_absolute_error
+import pprint
 
 
 def get_model_count_from_dir(model_dir=None):
@@ -98,7 +99,7 @@ def model(data, test_split):
     total_minutes = 1440
     tolerance = 60 / 1440
 
-    model_info = namedtuple('model', ['error', 'model', 'tolerance', 'y_max', 'test_split',
+    model_info = namedtuple('model', ['error', 'model', 'tolerance', 'x_max', 'y_max', 'test_split',
                                       'train_split'])
 
     model_count = get_model_count_from_dir()
@@ -107,6 +108,7 @@ def model(data, test_split):
 
 
     response = []
+    models = []
     data_plot = defaultdict(list)
     for ind, df in data.groupby(by=['w_name']):
         name = df['w_name'].iloc[0]
@@ -122,28 +124,32 @@ def model(data, test_split):
         x = df[['gender_female', 'gender_male', 'location_home',
                 'location_office', 'location_other']]
         y_max = y.max()
+        x_max = x.shape[0]
         y = y / total_minutes  # one day have 1440 minutes
         name, error, model = multiple_linear_regression(name, x, y, tolerance, test_split=test_split)
         model.y_max = y_max
+        model.x_max = x_max
         joblib.dump(model, os.path.join(model_path, f'{name}.model'))
 
-        current_model = model_info(error=error, model=name, tolerance=tolerance, y_max=y_max,
-                                   test_split=test_split, train_split=1 - test_split)
+        current_model = model_info(error=error, model=name, tolerance=tolerance,
+                                   x_max=x_max, y_max=y_max, test_split=test_split,
+                                   train_split=1 - test_split)
 
-        print(current_model)
+        # print(current_model)
         data_plot['name'].append(name)
         data_plot['error'].append(error)
-
+        models.append(current_model)
         pd.DataFrame(data_plot).to_csv(os.path.join(model_path, 'data.csv'), mode='a', header=False)
 
         pred = model.predict()[0] * 1440
 
-        print('pred', pred)
+        # print('pred', pred)
         if 0 < pred <= 1440:
             response.append({'name': name, 'time': pred, })
         elif pred > 1440:
             response.append({'name': name, 'time': 'no usage time found for current day'})
 
+    pprint.pprint(models)
     return response
 
 
@@ -176,7 +182,7 @@ def main(data):
     data['duration'] = data.end - data.start
     total_minutes = 1440  # minutes
     tolerance = 60 / total_minutes  # minutes
-    response = model(data, test_split=0.3)
+    response = model(data, test_split=0.2)
     return response
 
 
