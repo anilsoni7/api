@@ -23,13 +23,9 @@ class MatchedPatternMaleWeek1(models.Model):
     open_time = models.TextField(max_length=20)
     close_time = models.TextField(max_length=20)
     user_id = models.IntegerField()
-    latitude = models.TextField(max_length=20)
-    longitude = models.TextField(max_length=20)
-    location = models.TextField(max_length=10)
-    gender = models.TextField(max_length=10)
 
     class Meta:
-        db_table = 'matched_pattern_location_week1_male'
+        db_table = 'matched_pattern_week1_male'
 
 
 class MatchedPatternMaleWeek2(models.Model):
@@ -40,13 +36,9 @@ class MatchedPatternMaleWeek2(models.Model):
     open_time = models.TextField(max_length=20)
     close_time = models.TextField(max_length=20)
     user_id = models.IntegerField()
-    latitude = models.TextField(max_length=20)
-    longitude = models.TextField(max_length=20)
-    location = models.TextField(max_length=10)
-    gender = models.TextField(max_length=10)
 
     class Meta:
-        db_table = 'matched_pattern_location_week2_male'
+        db_table = 'matched_pattern_week2_male'
 
 
 class MatchedPatternFemaleWeek1(models.Model):
@@ -57,13 +49,9 @@ class MatchedPatternFemaleWeek1(models.Model):
     open_time = models.TextField(max_length=20)
     close_time = models.TextField(max_length=20)
     user_id = models.IntegerField()
-    latitude = models.TextField(max_length=20)
-    longitude = models.TextField(max_length=20)
-    location = models.TextField(max_length=10)
-    gender = models.TextField(max_length=10)
 
     class Meta:
-        db_table = 'matched_pattern_location_week1_female'
+        db_table = 'matched_pattern_week1_female'
 
 
 class MatchedPatternFemaleWeek2(models.Model):
@@ -74,10 +62,6 @@ class MatchedPatternFemaleWeek2(models.Model):
     open_time = models.TextField(max_length=20)
     close_time = models.TextField(max_length=20)
     user_id = models.IntegerField()
-    latitude = models.TextField(max_length=20)
-    longitude = models.TextField(max_length=20)
-    location = models.TextField(max_length=10)
-    gender = models.TextField(max_length=10)
 
     class Meta:
-        db_table = 'matched_pattern_location_week2_female'
+        db_table = 'matched_pattern_week2_female'

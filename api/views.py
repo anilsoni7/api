@@ -53,8 +53,7 @@ def predict(request, gender, week, app_name, user_id):
     else:
         user = db_table.get(gender).get(week).objects.filter(user_id=user_id, w_name__iexact=app_name)
 
-    user = list(user.values_list('w_name', 'w_date', 'open_time', 'close_time', 'latitude',
-                                 'longitude', 'location', 'gender'))
+    user = list(user.values_list('w_name', 'w_date', 'open_time', 'close_time'))
 
     data = app_usage.main(user)
     data = to_hour(data)

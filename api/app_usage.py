@@ -1,6 +1,7 @@
 import os
 from collections import defaultdict, namedtuple
 
+import numpy as np
 import pandas as pd
 from sklearn.externals import joblib
 from sklearn.metrics import mean_absolute_error
@@ -32,6 +33,25 @@ def pad_century_to_date(data, year='19', century='20'):
         data[year_mask] = mask
 
     return data
+
+
+def linear_regression(name, x, y, tolerance):
+    from sklearn.linear_model import LinearRegression
+
+    if len(x) != 1:
+        x_train, y_train, x_test, y_test = train_test_split(x, y)
+    else:
+        x_train = x_test = x
+        y_train = y_test = y
+
+    lr = LinearRegression(n_jobs=-1)
+    lr.fit(x_train, y_train)
+
+    pred = lr.predict(x_test)
+
+    acc = accuracy(y_test, pred, tolerance)
+
+    return name, acc, lr
 
 
 def multiple_linear_regression(name, x, y, tolerance, test_split=0.3):
@@ -84,99 +104,60 @@ def convert_tolerance_minutes(args):
     return tolerance
 
 
-def predict(model, x=None):
-    pred = None
-    if x is not None:
-        pred = model.predict(x)
-    else:
-        pred = model.predict()
-
-    return pred
+def predict(model, data):
+    x = model.x_max + 1
+    pred = model.predict([[x]])
+    return pred.reshape(-1)[0]
 
 
-def model(data, test_split):
-    total_minutes = 1440
-    tolerance = 60 / 1440
+def main(data):
 
-    model_info = namedtuple('model', ['error', 'model', 'tolerance', 'y_max', 'test_split',
-                                      'train_split'])
+    data = pd.DataFrame(data, columns=['name', 'date', 'open', 'close'])
+
+    data['start'] = pd.to_datetime(data['date'] + ' ' + data['open'])
+    data['end'] = pd.to_datetime(data['date'] + ' ' + data['close'])
+    data['duration'] = data.end - data.start
+    tolerance = 60  # minutes
+
+    model_info = namedtuple('model', ['error', 'model', 'tolerance', 'y_max', 'x_max'])
 
     model_count = get_model_count_from_dir()
     model_path = f'models/{model_count + 1}'
     os.makedirs(model_path)
 
-
-    response = []
     data_plot = defaultdict(list)
-    for ind, df in data.groupby(by=['w_name']):
-        name = df['w_name'].iloc[0]
-        y = df.start
-        print(df.columns)
-        cols = set(['gender_female', 'gender_male', 'location_home',
-                    'location_office', 'location_other'])
-        missing_col = list(cols - set(df.columns.tolist()))
-
-        for m_col in missing_col:
-            df[m_col] = 0
-
-        x = df[['gender_female', 'gender_male', 'location_home',
-                'location_office', 'location_other']]
+    total_minutes = 1440 # minutes
+    # data['name'] = data['w_name']
+    response = []
+    if not os.path.exists('data.csv'):
+        pd.DataFrame(columns=['name', 'error']).to_csv('data.csv')
+    for ind, df in data.groupby(by=['name']):
+        name = df.name.iloc[0]
+        y = to_minutes(df.start)
+        x = list(range(len(y)))
+        y = np.asarray(y).reshape(-1, 1)
+        x = np.asarray(x).reshape(-1, 1)
         y_max = y.max()
+        x_max = x.shape[0]
         y = y / total_minutes  # one day have 1440 minutes
-        name, error, model = multiple_linear_regression(name, x, y, tolerance, test_split=test_split)
+
+        tolerance = tolerance / total_minutes
+        name, error, model = linear_regression(name, x, y, tolerance)
+        model.x_max = x_max
         model.y_max = y_max
         joblib.dump(model, os.path.join(model_path, f'{name}.model'))
 
-        current_model = model_info(error=error, model=name, tolerance=tolerance, y_max=y_max,
-                                   test_split=test_split, train_split=1 - test_split)
+        current_model = model_info(error=error, model=name, tolerance=tolerance, y_max=y_max, x_max=x_max)
 
-        print(current_model)
         data_plot['name'].append(name)
         data_plot['error'].append(error)
 
         pd.DataFrame(data_plot).to_csv(os.path.join(model_path, 'data.csv'), mode='a', header=False)
 
-        pred = model.predict()[0] * 1440
-
-        print('pred', pred)
-        if 0 < pred <= 1440:
-            response.append({'name': name, 'time': pred, })
+        pred = predict(model, data) * 1440
+        if pred > 0 and pred <= 1440:
+            response.append({'name': name, 'time': pred})
         elif pred > 1440:
             response.append({'name': name, 'time': 'no usage time found for current day'})
 
     return response
-
-
-def preprocess(data):
-    data['w_date'] = pad_century_to_date(data['w_date'].copy())
-
-    data['open_time'] = pd.to_datetime(data['w_date'] + ' ' + data['open_time'], format='%d-%m-%Y %H:%M')
-    data['close_time'] = pd.to_datetime(data['w_date'] + ' ' + data['close_time'], format='%d-%m-%Y %H:%M')
-
-
-    data = pd.get_dummies(data, columns=['gender', 'location'])
-
-    data.sort_values(by='open_time', inplace=True)
-    data.reset_index(drop=True, inplace=True)
-
-    data['open_time_minutes'] = to_minutes(data['open_time'])
-    data['close_time_minutes'] = to_minutes(data['close_time'])
-
-    return data
-
-
-def main(data):
-    data = pd.DataFrame(data, columns=['w_name', 'w_date', 'open_time', 'close_time', 'latitude',
-                                       'longitude', 'location', 'gender'])
-    data = preprocess(data)
-    data['name'] = data['w_name']
-    data['start'] = data['open_time_minutes']
-    data['end'] = data['close_time_minutes']
-
-    data['duration'] = data.end - data.start
-    total_minutes = 1440  # minutes
-    tolerance = 60 / total_minutes  # minutes
-    response = model(data, test_split=0.3)
-    return response
-
-
