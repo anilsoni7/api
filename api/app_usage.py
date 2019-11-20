@@ -119,20 +119,16 @@ def main(data):
         joblib.dump(model, os.path.join(model_path, f'{name}.model'))
 
         current_model = model_info(error=error, model=name, tolerance=tolerance, y_max=y_max, x_max=x_max)
-        print(model.__dict__)
 
         data_plot['name'].append(name)
         data_plot['error'].append(error)
 
-        print(data_plot)
-
-        print(y)
         pd.DataFrame(data_plot).to_csv(os.path.join(model_path, 'data.csv'), mode='a', header=False)
 
-        pred = predict(model, data)
-        if pred > 0 and pred < 1440:
-            response.append({'name':name ,'opentime':pred})
-        else:
-            response.append({'name': name, 'opentime': 'error'})
+        pred = predict(model, data) * 1440
+        if pred > 0 and pred <= 1440:
+            response.append({'name': name, 'time': pred})
+        elif pred > 1440:
+            response.append({'name': name, 'time': 'no usage time found for current day'})
 
     return response
