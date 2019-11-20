@@ -35,7 +35,12 @@ def to_hour(data):
     return data_with_hour
 
 
-def predict(request, gender, week, app_name, user_id):
+def predict(request, gender, week, app_name, user_id, split):
+
+    if split not in (20, 30, 40):
+        return JsonResponse({'error': 'invalid test split'}, safe=False)
+
+    split = split / 100
 
     db_table = {
         'male': {
@@ -56,7 +61,7 @@ def predict(request, gender, week, app_name, user_id):
     user = list(user.values_list('w_name', 'w_date', 'open_time', 'close_time', 'latitude',
                                  'longitude', 'location', 'gender'))
 
-    data = app_usage.main(user)
+    data = app_usage.main(user, split)
     data = to_hour(data)
     return JsonResponse(data, safe=False)
 

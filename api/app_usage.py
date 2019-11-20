@@ -171,7 +171,7 @@ def preprocess(data):
     return data
 
 
-def main(data):
+def main(data, split):
     data = pd.DataFrame(data, columns=['w_name', 'w_date', 'open_time', 'close_time', 'latitude',
                                        'longitude', 'location', 'gender'])
     data = preprocess(data)
@@ -182,7 +182,7 @@ def main(data):
     data['duration'] = data.end - data.start
     total_minutes = 1440  # minutes
     tolerance = 60 / total_minutes  # minutes
-    response = model(data, test_split=0.2)
+    response = model(data, test_split=split)
     return response
 
 
