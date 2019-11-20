@@ -31,14 +31,20 @@ def to_hour(data):
 
     return data_with_hour
 
-def predict(request,app_name, user_id):
+def predict(request,app_name, user_id, split):
+
+    if split not in (20, 30, 40):
+        return JsonResponse({'error': 'invalid test split'})
+
+    split = split / 100
+
     if app_name == 'all':
         user = MatchedPattern.objects.filter(user_id=user_id)
     else:
         user = MatchedPattern.objects.filter(user_id=user_id, w_name__iexact=app_name)
 
     user = list(user.values_list('w_name', 'w_date', 'open_time', 'close_time'))
-    data = app_usage.main(user)
+    data = app_usage.main(user, split)
     data = to_hour(data)
     return JsonResponse(data, safe=False)
 

@@ -21,11 +21,11 @@ def get_model_count_from_dir(model_dir=None):
         return count
 
 
-def linear_regression(name, x, y, tolerance):
+def linear_regression(name, x, y, tolerance, test_split):
     from sklearn.linear_model import LinearRegression
 
     if len(x) != 1:
-        x_train, y_train, x_test, y_test = train_test_split(x, y)
+        x_train, y_train, x_test, y_test = train_test_split(x, y, test_set=test_split)
     else:
         x_train = x_test = x
         y_train = y_test = y
@@ -81,7 +81,7 @@ def predict(model, data):
     return pred.reshape(-1)[0]
 
 
-def main(data):
+def main(data, test_split):
 
     data = pd.DataFrame(data, columns=['name', 'date', 'open', 'close'])
 
@@ -90,7 +90,8 @@ def main(data):
     data['duration'] = data.end - data.start
     tolerance = 60  # minutes
 
-    model_info = namedtuple('model', ['error', 'model', 'tolerance', 'y_max', 'x_max'])
+    model_info = namedtuple('model', ['error', 'model', 'tolerance', 'y_max', 'x_max',
+                                      'train_split', 'test_split'])
 
     model_count = get_model_count_from_dir()
     model_path = f'models/{model_count + 1}'
@@ -113,12 +114,13 @@ def main(data):
         y = y / total_minutes  # one day have 1440 minutes
 
         tolerance = tolerance / total_minutes
-        name, error, model = linear_regression(name, x, y, tolerance)
+        name, error, model = linear_regression(name, x, y, tolerance, test_split)
         model.x_max = x_max
         model.y_max = y_max
         joblib.dump(model, os.path.join(model_path, f'{name}.model'))
 
-        current_model = model_info(error=error, model=name, tolerance=tolerance, y_max=y_max, x_max=x_max)
+        current_model = model_info(error=error, model=name, tolerance=tolerance, y_max=y_max, x_max=x_max,
+                                   train_split=1 - test_split, test_split=test_split)
 
         data_plot['name'].append(name)
         data_plot['error'].append(error)
