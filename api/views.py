@@ -1,4 +1,6 @@
-from .models import MatchedPattern
+from .models import (MatchedPattern, MatchedPatternWeek1Female,
+                     MatchedPatternWeek1Male, MatchedPatternWeek2Female,
+                     MatchedPatternWeek2Male)
 from . import app_usage
 from django.http import JsonResponse
 
@@ -31,17 +33,29 @@ def to_hour(data):
 
     return data_with_hour
 
-def predict(request,app_name, user_id, split):
+
+def predict(request, gender, week, app_name, user_id, split):
 
     if split not in (20, 30, 40):
         return JsonResponse({'error': 'invalid test split'})
 
     split = split / 100
 
+    db_table = {
+        'male': {
+            'week1': MatchedPatternWeek1Male,
+            'week2': MatchedPatternWeek2Male
+        },
+        'female': {
+            'week1': MatchedPatternWeek1Female,
+            'week2': MatchedPatternWeek2Female
+        }
+    }
+
     if app_name == 'all':
-        user = MatchedPattern.objects.filter(user_id=user_id)
+        user = db_table.get(gender).get(week).objects.filter(user_id=user_id)
     else:
-        user = MatchedPattern.objects.filter(user_id=user_id, w_name__iexact=app_name)
+        user = db_table.get(gender).get(week).objects.filter(user_id=user_id, w_name__iexact=app_name)
 
     user = list(user.values_list('w_name', 'w_date', 'open_time', 'close_time'))
     data = app_usage.main(user, split)

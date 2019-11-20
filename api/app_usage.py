@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from sklearn.externals import joblib
 from sklearn.metrics import mean_absolute_error
+import pprint
 
 
 def get_model_count_from_dir(model_dir=None):
@@ -89,6 +90,8 @@ def main(data, test_split):
     data['end'] = pd.to_datetime(data['date'] + ' ' + data['close'])
     data['duration'] = data.end - data.start
     tolerance = 60  # minutes
+    total_minutes = 1440  # minutes
+    tolerance = tolerance / total_minutes
 
     model_info = namedtuple('model', ['error', 'model', 'tolerance', 'y_max', 'x_max',
                                       'train_split', 'test_split'])
@@ -98,9 +101,10 @@ def main(data, test_split):
     os.makedirs(model_path)
 
     data_plot = defaultdict(list)
-    total_minutes = 1440 # minutes
+
     # data['name'] = data['w_name']
     response = []
+    models = []
     if not os.path.exists('data.csv'):
         pd.DataFrame(columns=['name', 'error']).to_csv('data.csv')
     for ind, df in data.groupby(by=['name']):
@@ -113,7 +117,7 @@ def main(data, test_split):
         x_max = x.shape[0]
         y = y / total_minutes  # one day have 1440 minutes
 
-        tolerance = tolerance / total_minutes
+
         name, error, model = linear_regression(name, x, y, tolerance, test_split)
         model.x_max = x_max
         model.y_max = y_max
@@ -124,6 +128,7 @@ def main(data, test_split):
 
         data_plot['name'].append(name)
         data_plot['error'].append(error)
+        models.append(current_model)
 
         pd.DataFrame(data_plot).to_csv(os.path.join(model_path, 'data.csv'), mode='a', header=False)
 
@@ -133,4 +138,5 @@ def main(data, test_split):
         elif pred > 1440:
             response.append({'name': name, 'time': 'no usage time found for current day'})
 
+    pprint.pprint(models)
     return response
