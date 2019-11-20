@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from sklearn.externals import joblib
 from sklearn.metrics import mean_absolute_error
-
+import math
 
 def get_model_count_from_dir(model_dir=None):
     if model_dir is None:
@@ -35,15 +35,18 @@ def pad_century_to_date(data, year='19', century='20'):
     return data
 
 
-def linear_regression(name, x, y, tolerance):
+def linear_regression(name, x, y, tolerance, test_split):
     from sklearn.linear_model import LinearRegression
 
     if len(x) != 1:
-        x_train, y_train, x_test, y_test = train_test_split(x, y)
+        x_train, y_train, x_test, y_test = train_test_split(x, y, test_set=test_split)
     else:
         x_train = x_test = x
         y_train = y_test = y
 
+    print('x', x, len(x))
+    print('x_train', x_train.shape,  y_train.shape, x_test.shape, y_test.shape)
+    # print('y_train',)
     lr = LinearRegression(n_jobs=-1)
     lr.fit(x_train, y_train)
 
@@ -77,7 +80,7 @@ def train_test_split(x, y, test_set=0.3):
     if len(x) != len(y):
         raise ValueError('X and y must be same dimesnion')
 
-    train_set = int(len(x) * (1 - test_set))
+    train_set = int(math.floor(len(x) * (1 - test_set)))
     return x[:train_set], y[:train_set], x[train_set:], y[train_set:]
 
 
@@ -110,7 +113,7 @@ def predict(model, data):
     return pred.reshape(-1)[0]
 
 
-def main(data):
+def main(data, split):
 
     data = pd.DataFrame(data, columns=['name', 'date', 'open', 'close'])
 
@@ -141,8 +144,10 @@ def main(data):
         x_max = x.shape[0]
         y = y / total_minutes  # one day have 1440 minutes
 
+        if len(x) == 0:
+            continue
         tolerance = tolerance / total_minutes
-        name, error, model = linear_regression(name, x, y, tolerance)
+        name, error, model = linear_regression(name, x, y, tolerance, test_split=split)
         model.x_max = x_max
         model.y_max = y_max
         joblib.dump(model, os.path.join(model_path, f'{name}.model'))
