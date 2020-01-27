@@ -1,8 +1,9 @@
 from .models import (MatchedPattern, MatchedPatternFemaleWeek1,
                      MatchedPatternFemaleWeek2, MatchedPatternMaleWeek1,
-                     MatchedPatternMaleWeek2)
+                     MatchedPatternMaleWeek2, DailyTrackActualLocation)
 from . import app_usage
 from django.http import JsonResponse
+from . import lstm
 
 
 def sort(data):
@@ -48,6 +49,9 @@ def predict(request, gender, week, app_name, user_id, split):
         'female': {
             'week1': MatchedPatternFemaleWeek1,
             'week2': MatchedPatternFemaleWeek2
+        },
+        'lstm': {
+
         }
     }
 
@@ -62,3 +66,20 @@ def predict(request, gender, week, app_name, user_id, split):
     data = to_hour(data)
     return JsonResponse(data, safe=False)
 
+
+def lstm_view(request, app_name, user_id, split):
+
+    if split not in (20, 30, 40):
+        return JsonResponse({'error': 'invalid split data'})
+    split = split / 100
+
+    if app_name == "all":
+        user = DailyTrackActualLocation.objects.filter(user_id=user_id)
+    else:
+        user = DailyTrackActualLocation.objects.filter(user_id=user_id, name__iexact=app_name)
+
+    user = list(user.values_list('name', 'date', 'open_time', 'close_time'))
+
+    data = lstm.main(user, split)
+    data = to_hour(data)
+    return JsonResponse(data, safe=False)
