@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8e8957cb-66fb-42c3-acbe-7f4134e49859" name="Default Changelist" comment="" />
+    <list default="true" id="8e8957cb-66fb-42c3-acbe-7f4134e49859" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/lstm.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/lstm.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -73,6 +76,8 @@
       <updated>1571562078140</updated>
       <workItem from="1571562100712" duration="7325000" />
       <workItem from="1580140078851" duration="9880000" />
+      <workItem from="1580231718553" duration="884000" />
+      <workItem from="1580275593556" duration="547000" />
     </task>
     <servers />
   </component>
@@ -84,10 +89,18 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
     </option>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="372" y="224" key="com.intellij.ide.util.TipDialog" timestamp="1580275594355">
+      <screen x="67" y="27" width="1299" height="741" />
+    </state>
+    <state x="372" y="224" key="com.intellij.ide.util.TipDialog/67.27.1299.741@67.27.1299.741" timestamp="1580275594355" />
   </component>
 </project>

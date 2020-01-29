@@ -60,7 +60,8 @@ def preprocess(start):
 
 def predict(model, data, steps=1):
     pred = []
-    pred.append(float(model.predict([[[data]]]).flatten()[0]))
+    p = model.predict([[[data]]])
+    pred.append(float(p.flatten()[0]))
     for step in range(steps-1):
         p = model.predict([[[pred[-1]]]])
         pred.append(float(p.flatten()[0]))
@@ -73,7 +74,7 @@ def create_train_model(x, y, epochs=97, batch_size=1,
                        lstm_units=7, test_split=0.3):
 
     model = Sequential()
-    model.add(LSTM(lstm_units, 'relu', dropout=0.3))
+    model.add(LSTM(lstm_units, 'relu', dropout=0.3, input_shape=(1, 1)))
     model.add(Dense(1, 'sigmoid'))
     model.compile(loss='mean_squared_error', optimizer='adam', metrics=['acc'])
     history = model.fit(x, y, epochs=epochs, batch_size=batch_size,
@@ -108,6 +109,7 @@ def main(data, split):
                 print(f'didnt got data for {idx}')
                 continue
             x = x[:, None, None]
+
             print(f'training model for {idx}')
             model, loss = create_train_model(x, y, epochs=1, test_split=split)
 
@@ -116,7 +118,7 @@ def main(data, split):
 
             pd.DataFrame(data_plot).to_csv(os.path.join(model_path, 'data.csv'), mode='a', header=False)
 
-            pred = predict(model, float(y[-1].flatten()[0]), steps=1)
+            pred = predict(model, float(y[-1]), steps=1)
 
             if not any([p < 0 or p >= 1440 for p in pred]):
                 response.append({'name': name, 'time': pred[0]})
