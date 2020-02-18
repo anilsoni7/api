@@ -62,7 +62,7 @@ def predict(request, gender, week, app_name, user_id, split):
 
     user = list(user.values_list('w_name', 'w_date', 'open_time', 'close_time'))
 
-    data = app_usage.main(user, split)
+    data = lstm.main(user, split)
     data = to_hour(data)
     return JsonResponse(data, safe=False)
 
