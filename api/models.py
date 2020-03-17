@@ -41,31 +41,31 @@ class MatchedPatternMaleWeek2(models.Model):
         db_table = 'matched_pattern_week2_male'
 
 
-class MatchedPatternMaleWeek3(models.Model):
-
-    w_id = models.IntegerField(primary_key=True)
-    w_name = models.TextField(max_length=50)
-    w_date = models.TextField(max_length=20)
-    open_time = models.TextField(max_length=20)
-    close_time = models.TextField(max_length=20)
-    user_id = models.IntegerField()
-
-    class Meta:
-        db_table = 'matched_pattern_location_week3_male'
-
-
-class MatchedPatternMaleWeek4(models.Model):
-
-    w_id = models.IntegerField(primary_key=True)
-    w_name = models.TextField(max_length=50)
-    w_date = models.TextField(max_length=20)
-    open_time = models.TextField(max_length=20)
-    close_time = models.TextField(max_length=20)
-    user_id = models.IntegerField()
-
-    class Meta:
-        db_table = 'matched_pattern_location_week4_male'
-
+# class MatchedPatternMaleWeek3(models.Model):
+#
+#     w_id = models.IntegerField(primary_key=True)
+#     w_name = models.TextField(max_length=50)
+#     w_date = models.TextField(max_length=20)
+#     open_time = models.TextField(max_length=20)
+#     close_time = models.TextField(max_length=20)
+#     user_id = models.IntegerField()
+#
+#     class Meta:
+#         db_table = 'matched_pattern_location_week3_male'
+#
+#
+# class MatchedPatternMaleWeek4(models.Model):
+#
+#     w_id = models.IntegerField(primary_key=True)
+#     w_name = models.TextField(max_length=50)
+#     w_date = models.TextField(max_length=20)
+#     open_time = models.TextField(max_length=20)
+#     close_time = models.TextField(max_length=20)
+#     user_id = models.IntegerField()
+#
+#     class Meta:
+#         db_table = 'matched_pattern_location_week4_male'
+#
 
 class MatchedPatternFemaleWeek1(models.Model):
 
@@ -93,30 +93,30 @@ class MatchedPatternFemaleWeek2(models.Model):
         db_table = 'matched_pattern_week2_female'
 
 
-class MatchedPatternFemaleWeek3(models.Model):
-
-    w_id = models.IntegerField(primary_key=True)
-    w_name = models.TextField(max_length=50)
-    w_date = models.TextField(max_length=20)
-    open_time = models.TextField(max_length=20)
-    close_time = models.TextField(max_length=20)
-    user_id = models.IntegerField()
-
-    class Meta:
-        db_table = 'matched_pattern_location_week3_female'
-
-
-class MatchedPatternFemaleWeek4(models.Model):
-
-    w_id = models.IntegerField(primary_key=True)
-    w_name = models.TextField(max_length=50)
-    w_date = models.TextField(max_length=20)
-    open_time = models.TextField(max_length=20)
-    close_time = models.TextField(max_length=20)
-    user_id = models.IntegerField()
-
-    class Meta:
-        db_table = 'matched_pattern_location_week4_female'
+# class MatchedPatternFemaleWeek3(models.Model):
+#
+#     w_id = models.IntegerField(primary_key=True)
+#     w_name = models.TextField(max_length=50)
+#     w_date = models.TextField(max_length=20)
+#     open_time = models.TextField(max_length=20)
+#     close_time = models.TextField(max_length=20)
+#     user_id = models.IntegerField()
+#
+#     class Meta:
+#         db_table = 'matched_pattern_location_week3_female'
+#
+#
+# class MatchedPatternFemaleWeek4(models.Model):
+#
+#     w_id = models.IntegerField(primary_key=True)
+#     w_name = models.TextField(max_length=50)
+#     w_date = models.TextField(max_length=20)
+#     open_time = models.TextField(max_length=20)
+#     close_time = models.TextField(max_length=20)
+#     user_id = models.IntegerField()
+#
+#     class Meta:
+#         db_table = 'matched_pattern_location_week4_female'
 
 
 class DailyTrackActualLocation(models.Model):
