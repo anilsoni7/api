@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import LSTM, Dense
+import pprint
 
 
 def get_model_count_from_dir(model_dir=None):
@@ -81,7 +82,8 @@ def create_train_model(x, y, epochs=97, batch_size=1,
                         validation_split=test_split)
 
     loss = history.history['loss']
-    return model, loss
+    val_loss = history.history['val_loss']
+    return model, loss, val_loss, history
 
 
 def main(data, split):
@@ -96,6 +98,9 @@ def main(data, split):
     model_count = get_model_count_from_dir()
     model_path = f'models/{model_count + 1}'
     os.makedirs(model_path)
+    pd.DataFrame(
+        columns=['name', 'train_loss', 'val_loss', 'accuracy', 'val_accuracy']
+    ).to_csv(os.path.join(model_path, 'data.csv'), index=False)
 
     response = []
     data_plot = defaultdict(list)
@@ -111,11 +116,20 @@ def main(data, split):
             x = x[:, None, None]
 
             print(f'training model for {idx}')
-            model, loss = create_train_model(x, y, epochs=1, test_split=split)
+            model, loss, val_loss, history = create_train_model(x, y, epochs=1, test_split=split)
 
             data_plot['name'].append(name)
-            data_plot['error'].append(loss)
-
+            data_plot['train_loss'].append(loss[0])
+            data_plot['val_loss'].append(val_loss[0])
+            data_plot['accuracy'].append(abs(1 - loss[0]))
+            data_plot['val_accuracy'].append(abs(1 - val_loss[0]))
+            # data_plot.append({
+            #     'name': name,
+            #     'train_loss': loss[0],
+            #     'val_loss': val_loss[0],
+            #     'accuracy': abs(1 - loss[0]),
+            #     'val_accuracy': abs(1 - val_loss[0])
+            # })
             pd.DataFrame(data_plot).to_csv(os.path.join(model_path, 'data.csv'), mode='a', header=False)
 
             pred = predict(model, float(y[-1]), steps=1)
@@ -125,4 +139,7 @@ def main(data, split):
             elif pred > 1440:
                 response.append({'name': name, 'time': 'no usage time found for current day'})
 
-    return response
+    pprint.pprint(f'Data plot for split: {split}')
+    # pprint.pprint(pd.DataFrame(data_plot).values.tolist())
+
+    return response, pd.DataFrame(data_plot).values.tolist()

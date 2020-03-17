@@ -1,6 +1,4 @@
-from .models import (MatchedPattern, MatchedPatternFemaleWeek1,
-                     MatchedPatternFemaleWeek2, MatchedPatternMaleWeek1,
-                     MatchedPatternMaleWeek2, DailyTrackActualLocation)
+from .models import *
 from . import app_usage
 from django.http import JsonResponse
 from . import lstm
@@ -37,21 +35,25 @@ def to_hour(data):
 
 
 def predict(request, gender, week, app_name, user_id, split):
-
     if split not in (20, 30, 40):
         return JsonResponse({'error': 'invalid split data'})
     split = split / 100
     db_table = {
         'male': {
-            'week1': MatchedPatternMaleWeek1,
-            'week2': MatchedPatternMaleWeek2
+            'week1': MatchedPatternLocationMaleWeek1,
+            'week2': MatchedPatternLocationMaleWeek2,
+            'week3': MatchedPatternLocationMaleWeek3,
+            'week4': MatchedPatternLocationMaleWeek4,
+            'week5': MatchedPatternLocationMaleWeek5,
+            'week6': MatchedPatternLocationMaleWeek6
         },
         'female': {
-            'week1': MatchedPatternFemaleWeek1,
-            'week2': MatchedPatternFemaleWeek2
-        },
-        'lstm': {
-
+            'week1': MatchedPatternLocationFemaleWeek1,
+            'week2': MatchedPatternLocationFemaleWeek1,
+            'week3': MatchedPatternLocationFemaleWeek1,
+            'week4': MatchedPatternLocationFemaleWeek1,
+            'week5': MatchedPatternLocationFemaleWeek1,
+            'week6': MatchedPatternLocationFemaleWeek1
         }
     }
 
@@ -60,11 +62,17 @@ def predict(request, gender, week, app_name, user_id, split):
     else:
         user = db_table.get(gender).get(week).objects.filter(user_id=user_id, w_name__iexact=app_name)
 
-    user = list(user.values_list('w_name', 'w_date', 'open_time', 'close_time'))
+    cols = ['w_name', 'w_date', 'open_time', 'close_time']
+    # if week not in ('week1',):
+    # cols = ['name', 'date', 'open_time', 'close_time']
 
-    data = lstm.main(user, split)
+    user = list(user.values_list(*cols))
+    # print(user)
+    data, error_rate = lstm.main(user, split)
     data = to_hour(data)
-    return JsonResponse(data, safe=False)
+
+    # pprint.pprint(data)
+    return JsonResponse({'data': data, 'error': error_rate}, safe=False)
 
 
 def lstm_view(request, app_name, user_id, split):
