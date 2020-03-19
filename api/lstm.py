@@ -109,7 +109,7 @@ def main(data, split):
 
         start_in_minutes = preprocess(d.start)
         if start_in_minutes.shape[0] == 1:
-            start_in_minutes.append(start_in_minutes.values.tolist() * 5)
+            start_in_minutes = start_in_minutes.repeat(5)
         x, y = create_dataset(start_in_minutes.values)
         print('dataset size', x.shape)
 
