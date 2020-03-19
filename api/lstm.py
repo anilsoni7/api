@@ -108,11 +108,10 @@ def main(data, split):
         name = d.name.iloc[0]
 
         start_in_minutes = preprocess(d.start)
-        if start_in_minutes.shape[0] == 1:
-            start_in_minutes = start_in_minutes.repeat(5)
+        if start_in_minutes.shape[0] < 5:
+            start_in_minutes = start_in_minutes.repeat(6)
         x, y = create_dataset(start_in_minutes.values)
-        print('dataset size', x.shape)
-
+        print('dataset size', x.shape, x)
         if x.ndim < 1:
             print(f'didnt got data for {idx}')
             continue
