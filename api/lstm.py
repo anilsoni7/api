@@ -98,48 +98,49 @@ def main(data, split):
     model_count = get_model_count_from_dir()
     model_path = f'models/{model_count + 1}'
     os.makedirs(model_path)
-    pd.DataFrame(
-        columns=['name', 'train_loss', 'val_loss', 'accuracy', 'val_accuracy']
-    ).to_csv(os.path.join(model_path, 'data.csv'), index=False)
+    # pd.DataFrame(
+    #     columns=['name', 'train_loss', 'val_loss', 'accuracy', 'val_accuracy']
+    # ).to_csv(os.path.join(model_path, 'data.csv'), index=False)
 
     response = []
-    data_plot = defaultdict(list)
+    # data_plot = defaultdict(list)
     for idx, d in groupped_data:
         name = d.name.iloc[0]
-        if d.shape[0] > 3:
-            start_in_minutes = preprocess(d.start)
-            x, y = create_dataset(start_in_minutes.values)
 
-            if x.ndim < 1:
-                print(f'didnt got data for {idx}')
-                continue
-            x = x[:, None, None]
+        start_in_minutes = preprocess(d.start)
+        x, y = create_dataset(start_in_minutes.values)
 
-            print(f'training model for {idx}')
-            model, loss, val_loss, history = create_train_model(x, y, epochs=1, test_split=split)
+        if x.ndim < 1:
+            print(f'didnt got data for {idx}')
+            continue
+        x = x[:, None, None]
 
-            data_plot['name'].append(name)
-            data_plot['train_loss'].append(loss[0])
-            data_plot['val_loss'].append(val_loss[0])
-            data_plot['accuracy'].append(abs(1 - loss[0]))
-            data_plot['val_accuracy'].append(abs(1 - val_loss[0]))
-            # data_plot.append({
-            #     'name': name,
-            #     'train_loss': loss[0],
-            #     'val_loss': val_loss[0],
-            #     'accuracy': abs(1 - loss[0]),
-            #     'val_accuracy': abs(1 - val_loss[0])
-            # })
-            pd.DataFrame(data_plot).to_csv(os.path.join(model_path, 'data.csv'), mode='a', header=False)
+        print(f'training model for {idx}')
+        model, loss, val_loss, history = create_train_model(x, y, epochs=1, test_split=split)
 
-            pred = predict(model, float(y[-1]), steps=1)
+        # data_plot['name'].append(name)
+        # data_plot['train_loss'].append(loss[0])
+        # data_plot['val_loss'].append(val_loss[0])
+        # data_plot['accuracy'].append(abs(1 - loss[0]))
+        # data_plot['val_accuracy'].append(abs(1 - val_loss[0]))
+        # data_plot.append({
+        #     'name': name,
+        #     'train_loss': loss[0],
+        #     'val_loss': val_loss[0],
+        #     'accuracy': abs(1 - loss[0]),
+        #     'val_accuracy': abs(1 - val_loss[0])
+        # })
+        # pd.DataFrame(data_plot).to_csv(os.path.join(model_path, 'data.csv'), mode='a', header=False)
 
-            if not any([p < 0 or p >= 1440 for p in pred]):
-                response.append({'name': name, 'time': pred[0]})
-            elif pred > 1440:
-                response.append({'name': name, 'time': 'no usage time found for current day'})
+        pred = predict(model, float(y[-1]), steps=1)
 
+        if not any([p < 0 or p >= 1440 for p in pred]):
+            response.append({'name': name, 'time': pred[0]})
+        elif pred > 1440:
+            response.append({'name': name, 'time': 'no usage time found for current day'})
+    del data, groupped_data, model, loss, val_loss, history, pred
     pprint.pprint(f'Data plot for split: {split}')
     # pprint.pprint(pd.DataFrame(data_plot).values.tolist())
 
-    return response, pd.DataFrame(data_plot).values.tolist()
+    # return response, pd.DataFrame(data_plot).values.tolist()
+    return response

@@ -68,11 +68,11 @@ def predict(request, gender, week, app_name, user_id, split):
 
     user = list(user.values_list(*cols))
     # print(user)
-    data, error_rate = lstm.main(user, split)
+    data = lstm.main(user, split)
     data = to_hour(data)
 
     # pprint.pprint(data)
-    return JsonResponse({'data': data, 'error': error_rate}, safe=False)
+    return JsonResponse(data, safe=False)
 
 
 def lstm_view(request, app_name, user_id, split):
