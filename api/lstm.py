@@ -61,7 +61,7 @@ def preprocess(start):
 
 def predict(model, data, steps=1):
     pred = []
-    p = model.predict([[[data]]])
+    p = model.predict([[[[data]]]])
     pred.append(float(p.flatten()[0]))
     for step in range(steps-1):
         p = model.predict([[[pred[-1]]]])
