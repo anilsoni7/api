@@ -118,7 +118,7 @@ def main(data, split):
         x = x[:, None, None]
 
         print(f'training model for {idx}')
-        model, loss, val_loss, history = create_train_model(x, y, epochs=1, test_split=split)
+        model, loss, val_loss, history = create_train_model(x, y, epochs=25, test_split=split)
 
         # data_plot['name'].append(name)
         # data_plot['train_loss'].append(loss[0])
