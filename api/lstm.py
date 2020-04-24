@@ -105,7 +105,7 @@ def main(data, split):
 
     response = []
     data_plot = defaultdict(list)
-    epoch = os.environ['epoch']
+    epoch = int(os.environ['epoch'])
     for idx, d in groupped_data:
         name = d.name.iloc[0]
 
