@@ -61,7 +61,7 @@ def preprocess(start):
 
 def predict(model, data, steps=1):
     pred = []
-    p = model.predict([[[[data]]]])
+    p = model.predict([[[data]]])
     pred.append(float(p.flatten()[0]))
     for step in range(steps-1):
         p = model.predict([[[pred[-1]]]])
@@ -140,7 +140,7 @@ def main(data, split):
             response.append({'name': name, 'time': pred[0]})
         elif pred > 1440:
             response.append({'name': name, 'time': 'no usage time found for current day'})
-    del data, groupped_data, model, loss, val_loss, history, pred
+    #del data, groupped_data, model, loss, val_loss, history, pred
     pprint.pprint(f'Data plot for split: {split}')
     # pprint.pprint(pd.DataFrame(data_plot).values.tolist())
 
