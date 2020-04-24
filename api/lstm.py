@@ -145,6 +145,8 @@ def main(data, split):
     #del data, groupped_data, model, loss, val_loss, history, pred
     pprint.pprint(f'Data plot for split: {split}')
     # pprint.pprint(pd.DataFrame(data_plot).values.tolist())
-
-    return response, pd.DataFrame(data_plot).values.tolist()
-    #return response
+    response = {
+        'response': response,
+        'error': pd.DataFrame(data_plot).values.tolist()
+    }
+    return response
