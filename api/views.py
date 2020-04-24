@@ -34,7 +34,7 @@ def to_hour(data):
     return data_with_hour
 
 
-def predict(request, gender, week, app_name, user_id, split):
+def predict(request, gender, week, app_name, user_id, split, error=False):
     if split not in (20, 30, 40):
         return JsonResponse({'error': 'invalid split data'})
     split = split / 100
@@ -69,13 +69,18 @@ def predict(request, gender, week, app_name, user_id, split):
     user = list(user.values_list(*cols))
     # print(user)
     data = lstm.main(user, split)
-    data = to_hour(data)
+    
+    if error:
+        data['response'] = to_hour(data['response'])
+    else:
+        data = data['response']
+        data = to_hour(data)
 
     # pprint.pprint(data)
     return JsonResponse(data, safe=False)
 
 
-def lstm_view(request, app_name, user_id, split):
+def lstm_view(request, app_name, user_id, split, error=False):
 
     if split not in (20, 30, 40):
         return JsonResponse({'error': 'invalid split data'})
@@ -90,4 +95,8 @@ def lstm_view(request, app_name, user_id, split):
 
     data = lstm.main(user, split)
     data = to_hour(data)
+    
+    if not error:
+        data = data['response']
+    
     return JsonResponse(data, safe=False)
