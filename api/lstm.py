@@ -87,6 +87,7 @@ def create_train_model(x, y, epochs=97, batch_size=1,
 
 
 def main(data, split):
+    
     data = pd.DataFrame(data, columns=['name', 'date', 'open', 'close'])
 
     data['start'] = to_datetime(data['date'], data['open'])
@@ -103,7 +104,8 @@ def main(data, split):
     # ).to_csv(os.path.join(model_path, 'data.csv'), index=False)
 
     response = []
-    # data_plot = defaultdict(list)
+    data_plot = defaultdict(list)
+    epoch = os.environ['epoch']
     for idx, d in groupped_data:
         name = d.name.iloc[0]
 
@@ -118,13 +120,13 @@ def main(data, split):
         x = x[:, None, None]
 
         print(f'training model for {idx}')
-        model, loss, val_loss, history = create_train_model(x, y, epochs=200, test_split=split)
+        model, loss, val_loss, history = create_train_model(x, y, epochs=epoch, test_split=split)
 
-        # data_plot['name'].append(name)
-        # data_plot['train_loss'].append(loss[0])
-        # data_plot['val_loss'].append(val_loss[0])
-        # data_plot['accuracy'].append(abs(1 - loss[0]))
-        # data_plot['val_accuracy'].append(abs(1 - val_loss[0]))
+        data_plot['name'].append(name)
+        data_plot['train_loss'].append(loss[0])
+        data_plot['val_loss'].append(val_loss[0])
+        data_plot['accuracy'].append(abs(1 - loss[0]))
+        data_plot['val_accuracy'].append(abs(1 - val_loss[0]))
         # data_plot.append({
         #     'name': name,
         #     'train_loss': loss[0],
@@ -144,5 +146,5 @@ def main(data, split):
     pprint.pprint(f'Data plot for split: {split}')
     # pprint.pprint(pd.DataFrame(data_plot).values.tolist())
 
-    # return response, pd.DataFrame(data_plot).values.tolist()
-    return response
+    return response, pd.DataFrame(data_plot).values.tolist()
+    #return response
