@@ -49,11 +49,11 @@ def predict(request, gender, week, app_name, user_id, split):
         },
         'female': {
             'week1': MatchedPatternLocationFemaleWeek1,
-            'week2': MatchedPatternLocationFemaleWeek1,
-            'week3': MatchedPatternLocationFemaleWeek1,
-            'week4': MatchedPatternLocationFemaleWeek1,
-            'week5': MatchedPatternLocationFemaleWeek1,
-            'week6': MatchedPatternLocationFemaleWeek1
+            'week2': MatchedPatternLocationFemaleWeek2,
+            'week3': MatchedPatternLocationFemaleWeek3,
+            'week4': MatchedPatternLocationFemaleWeek4,
+            'week5': MatchedPatternLocationFemaleWeek5,
+            'week6': MatchedPatternLocationFemaleWeek6
         }
     }
 
